@@ -1,0 +1,53 @@
+body{
+	background-color: #fff;
+	font-family: PingFangSC-Regular, sans-serif;
+}
+a{text-decoration: none; &:hover{text-decoration: none;}}
+ul{list-style: none; padding: 0;}
+.new-page-container{
+	position: absolute;
+    z-index: 100;
+    background-color: #fff;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+    // padding-top: 46px;
+    padding-top: 0;
+    -webkit-overflow-scrolling:touch;
+}
+.page{
+    position: absolute;
+    z-index: 100;
+    background-color: #fff;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+    // padding-top: 46px;
+    padding-top: 0;
+    -webkit-overflow-scrolling:touch;
+    &.no-pdtop{padding-top: 0;}
+}
+// slide切换页面
+.slide-enter-active,.slide-leave-active{
+  transition: all .5s;
+}
+.slide-enter,.slide-leave-to{
+  transform: translate3d(100%, 0, 0);
+}
+// fade切换页面
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s;
+}
+.fade-enter, .fade-leave-to{
+  opacity: 0;
+}
