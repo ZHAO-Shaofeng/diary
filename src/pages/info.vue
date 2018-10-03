@@ -100,13 +100,13 @@ let img = require('../assets/images/logo.png');
 export default {
   data () {
     return {
-    	loading: false, 
+    	loading: true, 
     	infoData: {
-    		date: "2018-09-30",
-				id: "100",
-				img: [img],
-				info: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
-				time: "2018-09-30 23:43:18"
+				// date: "2018-09-30",
+				// id: "100",
+				// img: [img],
+				// info: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
+				// time: "2018-09-30 23:43:18"
     	},
     	newInfo: []
     }
@@ -116,6 +116,40 @@ export default {
   	$('.materialboxed').materialbox();
 
   	this.newInfo = this.infoData.info
+
+  	$.ajax({
+		  url: 'http://localhost/hello/api/info.php?id='+this.$route.query.id,
+		  type: 'get',
+		  dataType: 'json',
+		  success: res => {
+		    this.loading = false
+		    $("#info_textarea").text(res.data.info);
+		    $("#input_textarea").text(res.data.info);
+		    $("#creatTime").text(res.data.time);
+		    if (res.data.img.length < 1) {
+		    	$('.fileInputBox').hide();
+		    }
+		    info_textarea = $("#info_textarea").text();
+		    time = res.data.time;
+		    $(".brand-logo").text(res.data.date); 
+
+		    // 修改文章
+				change = function() {
+				  if($("#input_textarea").val() != info_textarea){
+			      $(".saveUpdate-btn").addClass("show");
+			    }else{
+			      $(".saveUpdate-btn").removeClass("show");
+			    };
+			    // 输入框为空就返回或者删除
+			    if($("#input_textarea").val() == ""){
+						$(".saveUpdate-btn").removeClass("show");
+					}
+			  }
+			  $(document).ready(function(){
+			    $('.materialboxed').materialbox();
+			  });
+		  }
+		})
   },
   methods: {
   	goBack () {

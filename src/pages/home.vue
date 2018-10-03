@@ -78,7 +78,44 @@
 				</div>
 			</div>
 
-			<div style="height: 1000px;"></div>
+			<div class="preloader-wrapper more-loader small active">
+				<div class="spinner-layer spinner-blue">
+			    <div class="circle-clipper left">
+			      <div class="circle"></div>
+			    </div><div class="gap-patch">
+			      <div class="circle"></div>
+			    </div><div class="circle-clipper right">
+			      <div class="circle"></div>
+			    </div>
+			  </div>
+			  <div class="spinner-layer spinner-red">
+			    <div class="circle-clipper left">
+			      <div class="circle"></div>
+			    </div><div class="gap-patch">
+			      <div class="circle"></div>
+			    </div><div class="circle-clipper right">
+			      <div class="circle"></div>
+			    </div>
+			  </div>
+			  <div class="spinner-layer spinner-yellow">
+			    <div class="circle-clipper left">
+			      <div class="circle"></div>
+			    </div><div class="gap-patch">
+			      <div class="circle"></div>
+			    </div><div class="circle-clipper right">
+			      <div class="circle"></div>
+			    </div>
+			  </div>
+			  <div class="spinner-layer spinner-green">
+			    <div class="circle-clipper left">
+			      <div class="circle"></div>
+			    </div><div class="gap-patch">
+			      <div class="circle"></div>
+			    </div><div class="circle-clipper right">
+			      <div class="circle"></div>
+			    </div>
+			  </div>
+			</div>
 	  </div>
 
 	  <router-view />
@@ -90,23 +127,42 @@ export default {
   data () {
     return {
     	dataList: [
-	    	{
-	    		date: "2018-09-30",
-					id: "100",
-					img: [],
-					info: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
-					time: "2018-09-30 23:43:18"
-				},
-				{
-					date: "2018-09-18",
-					id: "92",
-					img: [],
-					info: "撒打算大苏打",
-					time: "2018-09-18 20:52:19"
-				}
+	   //  	{
+	   //  		date: "2018-09-30",
+				// 	id: "100",
+				// 	img: [],
+				// 	info: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
+				// 	time: "2018-09-30 23:43:18"
+				// },
+				// {
+				// 	date: "2018-09-18",
+				// 	id: "92",
+				// 	img: [],
+				// 	info: "撒打算大苏打",
+				// 	time: "2018-09-18 20:52:19"
+				// }
     	],
-    	loading: false
+    	loading: true,
+    	page: 1,
+			pagesize: 10
     }
+  },
+  mounted () {
+  	$.ajax({
+		  url: 'http://localhost/hello/api/list.php',
+		  type: 'get',
+		  data: {
+		  	page: this.page,
+		  	pagesize: this.pagesize
+		  },
+		  dataType: 'json',
+		  success: res => {
+		    // $(".loader-wrapper").delay(300).fadeOut();
+				// $(".wrapperBox").delay(600).fadeOut("slow");
+				this.loading = false
+		    this.dataList = res.data
+		  }
+		})
   },
   methods: {
   	hasClass (ele, cls) {
