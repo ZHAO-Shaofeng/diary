@@ -62,7 +62,7 @@
 				  </nav>
 				</div>
 
-				<textarea name="info" placeholder="今天......"></textarea>
+				<textarea name="info" placeholder="今天......" v-model="info_textarea"></textarea>
 				
 				<div class="fileInputBox">
 					<div class="container">
@@ -94,7 +94,8 @@ export default {
     	loading: false,
     	imgArr: [],
 			imgMax: 1,
-			newFile: true
+			newFile: true,
+			info_textarea: ''
     }
   },
   methods: {
@@ -123,11 +124,12 @@ export default {
 	          image.onload = function () {
 	            // 默认按比例压缩
 	            var w = image.width,
-	              	h = image.height
-	            // w = 500
-	            // h = w / scale
+	              	h = image.height,
+	              	scale = w / h
+	            w = 500
+	            h = w / scale
 	            // 默认图片质量为0.7，quality值越小，所绘制出的图像越模糊
-	            var quality = 1.0;
+	            var quality = 1;
 	            //生成canvas
 	            var canvas = document.createElement('canvas');
 	            var ctx = canvas.getContext('2d');
@@ -178,6 +180,25 @@ export default {
 	  },
 	  ok () {
 	  	localStorage.setItem("isUpdata","true")
+			let json = {
+		  	info: this.info_textarea,
+		  	img: this.imgArr
+			};
+			$.ajax({
+				url: 'http://localhost/hello/api/write.php',
+			  type: 'post',
+			  data: json,
+			  dataType: 'json',
+			  beforeSend: () => {
+			  	this.loading = true
+			  },
+			  success: res => {
+			    if (res.code === 200) {
+			    	this.loading = false
+			    	setTimeout(this.goBack(),1000)
+			    }
+			  }
+			})
 	  }
   }
 }

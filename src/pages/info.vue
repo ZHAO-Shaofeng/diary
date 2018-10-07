@@ -171,7 +171,7 @@ export default {
 			    	})
 			    	$(".saveUpdate-btn").removeClass("show");
 			    	this.loading = false
-			    	setTimeout(this.$router.back(),1300)
+			    	setTimeout(this.goBack(),1300)
 			    	localStorage.setItem("isUpdata","true")
 			    }
 			  }
