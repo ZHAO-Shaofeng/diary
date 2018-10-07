@@ -116,7 +116,7 @@ export default {
   	$('.materialboxed').materialbox();
 
   	$.ajax({
-		  url: 'http://localhost/hello/api/info.php?id='+this.$route.query.id,
+		  url: '/api/info.php?id='+this.$route.query.id,
 		  type: 'get',
 		  dataType: 'json',
 		  success: res => {
@@ -154,7 +154,7 @@ export default {
   	},
   	deleteInfo () {
   		$.ajax({
-				url: 'http://localhost/hello/api/delete.php',
+				url: '/api/delete.php',
 			  type: 'get',
 			  data: {
 			  	id: this.$route.query.id
@@ -179,7 +179,7 @@ export default {
   	},
   	saveChange () {
   		$.ajax({
-				url: 'http://localhost/hello/api/update.php',
+				url: '/api/update.php',
 			  type: 'post',
 			  data: {
 			  	id: this.$route.query.id,

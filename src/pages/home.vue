@@ -153,7 +153,7 @@ export default {
   methods: {
   	getData () {
   		$.ajax({
-			  url: 'http://localhost/hello/api/list.php',
+			  url: '/api/list.php',
 			  type: 'get',
 			  data: {
 			  	page: this.page,

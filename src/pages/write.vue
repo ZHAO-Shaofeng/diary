@@ -179,13 +179,12 @@ export default {
 	  	}
 	  },
 	  ok () {
-	  	localStorage.setItem("isUpdata","true")
 			let json = {
 		  	info: this.info_textarea,
 		  	img: this.imgArr
 			};
 			$.ajax({
-				url: 'http://localhost/hello/api/write.php',
+				url: '/api/write.php',
 			  type: 'post',
 			  data: json,
 			  dataType: 'json',
@@ -195,6 +194,7 @@ export default {
 			  success: res => {
 			    if (res.code === 200) {
 			    	this.loading = false
+			    	localStorage.setItem("isUpdata","true")
 			    	setTimeout(this.goBack(),1000)
 			    }
 			  }
