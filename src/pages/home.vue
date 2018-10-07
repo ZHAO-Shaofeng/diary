@@ -142,29 +142,34 @@ export default {
 				// 	time: "2018-09-18 20:52:19"
 				// }
     	],
-    	loading: true,
+    	loading: false,
     	page: 1,
 			pagesize: 10
     }
   },
   mounted () {
-  	$.ajax({
-		  url: 'http://localhost/hello/api/list.php',
-		  type: 'get',
-		  data: {
-		  	page: this.page,
-		  	pagesize: this.pagesize
-		  },
-		  dataType: 'json',
-		  success: res => {
-		    // $(".loader-wrapper").delay(300).fadeOut();
-				// $(".wrapperBox").delay(600).fadeOut("slow");
-				this.loading = false
-		    this.dataList = res.data
-		  }
-		})
+  	this.getData()
   },
   methods: {
+  	getData () {
+  		$.ajax({
+			  url: 'http://localhost/hello/api/list.php',
+			  type: 'get',
+			  data: {
+			  	page: this.page,
+			  	pagesize: this.pagesize
+			  },
+			  dataType: 'json',
+			  beforeSend: () => {
+			  	this.loading = true
+			  },
+			  success: res => {
+					this.loading = false
+			    this.dataList = res.data
+			    localStorage.setItem("isUpdata","false")
+			  }
+			})
+  	},
   	hasClass (ele, cls) {
 			return ele.className.match(new RegExp("(\\s|^)" + cls + "(\\s|$)"));
 		},
@@ -196,6 +201,16 @@ export default {
   	goWrite () {
   		this.$router.push('/home/write')
   	}
+  },
+  beforeRouteUpdate (to, from, next) {
+  	let isUpdata = localStorage.getItem("isUpdata");
+  	if (to.path == '/home') {
+  		if (isUpdata === 'true') {
+  			this.loading = true
+  			this.getData()
+  		}
+  	}
+  	next()
   }
 }
 </script>

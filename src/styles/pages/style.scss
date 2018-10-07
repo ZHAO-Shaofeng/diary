@@ -104,6 +104,8 @@ textarea{
         padding: 15px 15px 60px;
         outline: none;
         font-family: "微软雅黑";
+        line-height: 21px;
+        font-weight: 400;
         margin: 0;
         cursor: text;
         white-space: pre-wrap;
@@ -119,6 +121,9 @@ textarea{
     #input_textarea{
         display: none;
         line-height: inherit;
+        font-family: "微软雅黑";
+        line-height: 21px;
+        font-weight: 400;
     }
 }
 nav{

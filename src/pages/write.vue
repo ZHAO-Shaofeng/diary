@@ -171,14 +171,13 @@ export default {
 	    }
 	  },
 	  deleteImg(index) {
-	  	// let that = this
 	  	this.imgArr.splice(index, 1);
 	  	if (this.imgArr.length < this.imgMax) {
 	  		this.newFile = true
 	  	}
 	  },
 	  ok () {
-	  	
+	  	localStorage.setItem("isUpdata","true")
 	  }
   }
 }
