@@ -153,7 +153,7 @@ export default {
   methods: {
   	getData () {
   		$.ajax({
-			  url: '/api/list.php',
+			  url: 'http://localhost/diary-test/api/list.php',
 			  type: 'get',
 			  data: {
 			  	page: this.page,

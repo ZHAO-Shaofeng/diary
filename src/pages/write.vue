@@ -184,7 +184,7 @@ export default {
 		  	img: this.imgArr
 			};
 			$.ajax({
-				url: '/api/write.php',
+				url: 'http://localhost/diary-test/api/write.php',
 			  type: 'post',
 			  data: json,
 			  dataType: 'json',
