@@ -16,13 +16,14 @@ const versionRequirements = [
   }
 ]
 
-if (shell.which('npm')) {
-  versionRequirements.push({
-    name: 'npm',
-    currentVersion: exec('npm --version'),
-    versionRequirement: packageConfig.engines.npm
-  })
-}
+// npm run build 打包卡住，网上的解决方案是注释掉这里
+// if (shell.which('npm')) {
+//   versionRequirements.push({
+//     name: 'npm',
+//     currentVersion: exec('npm --version'),
+//     versionRequirement: packageConfig.engines.npm
+//   })
+// }
 
 module.exports = function () {
   const warnings = []

@@ -153,7 +153,7 @@ export default {
   methods: {
   	getData () {
   		$.ajax({
-			  url: 'http://localhost/diary-test/api/list.php',
+			  url: 'http://ncsvz7.natappfree.cc/diary-test/api/list.php',
 			  type: 'get',
 			  data: {
 			  	page: this.page,
@@ -167,6 +167,9 @@ export default {
 					this.loading = false
 			    this.dataList = res.data
 			    localStorage.setItem("isUpdata","false")
+			  },
+			  error: res => {
+			  	alert(res);
 			  }
 			})
   	},
