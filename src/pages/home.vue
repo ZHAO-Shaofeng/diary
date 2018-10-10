@@ -49,8 +49,7 @@
 	    <div class="navbar-fixed">
 			  <nav id="nav">
 			    <div class="nav-wrapper">
-			      <a href="javascript:;" class="btn-floating btn-large waves-effect waves-dark left-operate">
-			      	<!-- https://xn--xkrt4xga.xn--6qq986b3xl/ -->
+			      <a href="https://xn--xkrt4xga.xn--6qq986b3xl/" class="btn-floating btn-large waves-effect waves-dark left-operate">
 			      	<i class="material-icons">arrow_back</i>
 			      </a>
 			      <a href="javascript:;" class="brand-logo"><i class="material-icons">assignment</i></a>
@@ -67,6 +66,16 @@
 						</div>
 						<div class="right">
 							<div class="info">{{item.info}}</div>
+						</div>
+					</div>
+				</div>
+				<div class="timeitem no-pdb" v-show="noData">
+					<div class="flexbox">
+						<div class="left">
+							<div class="ico"></div>
+						</div>
+						<div class="right">
+							<div class="info">树洞给你挖空啦</div>
 						</div>
 					</div>
 				</div>
@@ -144,16 +153,27 @@ export default {
     	],
     	loading: false,
     	page: 1,
-			pagesize: 10
+			pagesize: 10,
+			finish: true,
+			noData: false
     }
   },
   mounted () {
+  	let touchtime = new Date().getTime();
+  	$("#nav").on("click", function(){
+  		if( new Date().getTime() - touchtime < 500 ){
+  			$(".page").animate({scrollTop:"0px"},800)
+  		}else{
+  			touchtime = new Date().getTime();
+  		}
+  	});
+
   	this.getData()
   },
   methods: {
   	getData () {
   		$.ajax({
-			  url: 'http://ncsvz7.natappfree.cc/diary-test/api/list.php',
+			  url: 'http://love.s1.natapp.cc/api/list.php',
 			  type: 'get',
 			  data: {
 			  	page: this.page,
@@ -169,7 +189,7 @@ export default {
 			    localStorage.setItem("isUpdata","false")
 			  },
 			  error: res => {
-			  	alert(res);
+			  	alert(JSON.stringify(res));
 			  }
 			})
   	},
@@ -191,6 +211,32 @@ export default {
   			this.addClass(ele, "shadow")
   		} else {
   			this.removeClass(ele, "shadow")
+  		}
+
+  		let scrollTop = this.$refs.page.scrollTop;
+  		let windowHeight = this.$refs.page.clientHeight;
+  		let scrollHeight = this.$refs.page.scrollHeight;
+  		if((scrollTop / (scrollHeight - windowHeight) >= 0.6) && this.finish){
+  			this.finish = false
+  			$.ajax({
+  				url: 'http://love.s1.natapp.cc/api/list.php',
+  				type: 'get',
+  				data: {
+  					page: this.page+1,
+  					pagesize: this.pagesize
+  				},
+  				dataType: 'json',
+  				success: res => {
+  					if (res.data.length > 0) {
+	  					this.dataList = this.dataList.concat(res.data)
+	  					this.page += 1
+	  					this.finish = true
+	  				}else{
+			    		this.noData = true
+				    	this.finish = false
+				    }
+  				}
+  			})
   		}
   	},
   	goInfo (id) {

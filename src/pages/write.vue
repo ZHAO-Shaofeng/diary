@@ -93,7 +93,7 @@ export default {
     return {
     	loading: false,
     	imgArr: [],
-			imgMax: 1,
+			imgMax: 8,
 			newFile: true,
 			info_textarea: ''
     }
@@ -184,7 +184,7 @@ export default {
 		  	img: this.imgArr
 			};
 			$.ajax({
-				url: 'http://ncsvz7.natappfree.cc/diary-test/api/write.php',
+				url: 'http://love.s1.natapp.cc/api/write.php',
 			  type: 'post',
 			  data: json,
 			  dataType: 'json',
