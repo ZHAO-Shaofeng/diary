@@ -6,11 +6,13 @@ import router from './router'
 import 'jquery'
 import materialize from 'materialize-css'
 import 'material-design-icons/iconfont/material-icons.css'
+import EXIF from 'exif-js'
 
 Vue.config.productionTip = false
 
 // Vue.use(materialize);
 Vue.prototype.$materialize = materialize
+Vue.prototype.$EXIF = EXIF
 
 /* eslint-disable no-new */
 new Vue({

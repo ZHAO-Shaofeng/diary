@@ -116,7 +116,7 @@ export default {
   	$('.materialboxed').materialbox();
 
   	$.ajax({
-		  url: 'http://love.s1.natapp.cc/api/info.php?id='+this.$route.query.id,
+		  url: 'http://192.168.0.168/diary-test/api/info.php?id='+this.$route.query.id,
 		  type: 'get',
 		  dataType: 'json',
 		  success: res => {
@@ -154,7 +154,7 @@ export default {
   	},
   	deleteInfo () {
   		$.ajax({
-				url: 'http://love.s1.natapp.cc/api/delete.php',
+				url: 'http://192.168.0.168/diary-test/api/delete.php',
 			  type: 'get',
 			  data: {
 			  	id: this.$route.query.id
@@ -179,7 +179,7 @@ export default {
   	},
   	saveChange () {
   		$.ajax({
-				url: 'http://love.s1.natapp.cc/api/update.php',
+				url: 'http://192.168.0.168/diary-test/api/update.php',
 			  type: 'post',
 			  data: {
 			  	id: this.$route.query.id,

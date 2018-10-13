@@ -106,8 +106,24 @@ export default {
 	    var that = this;
 	    that.loading = true	// 等待
 	    var imgLimit = 1024;
-	    var files = e.target.files;
+	    var files = e.target.files[0];
 	    console.log(files);
+	    // if (files && files.name) {
+	    	console.log(that.$EXIF.EXIF.GPSTags)
+	    	that.$EXIF.EXIF.getData(files, function() {
+	    		let exifData = that.$EXIF.EXIF.pretty(this);
+	    		let orientation = that.$EXIF.EXIF.getTag(this, "Orientation");
+	    		if (exifData) {
+	    			// console.log(exifData);
+	    			console.log("Orientation:" + orientation); // 拍照方向
+	    			if(orientation == '6'){
+	    				
+	    			}
+	    		} else {
+	    			alert("No EXIF data found in image '" + files.name + "'.");
+	    		}
+	    	});
+	    // }
 	    var image = new Image();
 	    console.log('最多传'+that.imgMax+'张')
 	    console.log('共上传'+files.length+'张');
@@ -184,7 +200,7 @@ export default {
 		  	img: this.imgArr
 			};
 			$.ajax({
-				url: 'http://love.s1.natapp.cc/api/write.php',
+				url: 'http://192.168.0.168/diary-test/api/write.php',
 			  type: 'post',
 			  data: json,
 			  dataType: 'json',
