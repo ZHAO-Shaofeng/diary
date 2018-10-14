@@ -173,7 +173,7 @@ export default {
   methods: {
   	getData () {
   		$.ajax({
-			  url: 'http://192.168.0.168/diary-test/api/list.php', //http://love.s1.natapp.cc/api/list.php
+			  url: 'http://192.168.1.105/diary-test/api/list.php', //http://love.s1.natapp.cc/api/list.php
 			  type: 'get',
 			  data: {
 			  	page: this.page,
@@ -216,7 +216,7 @@ export default {
   		if((scrollTop / (scrollHeight - windowHeight) >= 0.6) && this.finish){
   			this.finish = false
   			$.ajax({
-  				url: 'http://192.168.0.168/diary-test/api/list.php',
+  				url: 'http://192.168.1.105/diary-test/api/list.php',
   				type: 'get',
   				data: {
   					page: this.page+1,

@@ -102,28 +102,21 @@ export default {
   	goBack () {
   		this.$router.back()
   	},
+  	// exif.js 获取照片拍照方向信息
+  	getPhotoOrientation(img) {
+  		var orient
+  		var that = this
+  		that.$EXIF.EXIF.getData(img, () => {
+    		orient = that.$EXIF.EXIF.getTag(this, "Orientation");
+  		});
+  		return orient;
+  	},
 	  changeImg(e) {
 	    var that = this;
 	    that.loading = true	// 等待
 	    var imgLimit = 1024;
-	    var files = e.target.files[0];
-	    console.log(files);
-	    // if (files && files.name) {
-	    	console.log(that.$EXIF.EXIF.GPSTags)
-	    	that.$EXIF.EXIF.getData(files, function() {
-	    		let exifData = that.$EXIF.EXIF.pretty(this);
-	    		let orientation = that.$EXIF.EXIF.getTag(this, "Orientation");
-	    		if (exifData) {
-	    			// console.log(exifData);
-	    			console.log("Orientation:" + orientation); // 拍照方向
-	    			if(orientation == '6'){
-	    				
-	    			}
-	    		} else {
-	    			alert("No EXIF data found in image '" + files.name + "'.");
-	    		}
-	    	});
-	    // }
+	    var files = e.target.files;
+	    // console.log(files);
 	    var image = new Image();
 	    console.log('最多传'+that.imgMax+'张')
 	    console.log('共上传'+files.length+'张');
@@ -146,40 +139,87 @@ export default {
 	            h = w / scale
 	            // 默认图片质量为0.7，quality值越小，所绘制出的图像越模糊
 	            var quality = 1;
-	            //生成canvas
-	            var canvas = document.createElement('canvas');
-	            var ctx = canvas.getContext('2d');
-	            // 创建属性节点
-	            var anw = document.createAttribute('width');
-	            anw.nodeValue = w;
-	            var anh = document.createAttribute('height');
-	            anh.nodeValue = h;
-	            canvas.setAttributeNode(anw);
-	            canvas.setAttributeNode(anh);
-	            ctx.drawImage(image, 0, 0, w, h);
-	            image.style.width = '100%';
-	            var ext = image.src.substring(image.src.lastIndexOf('.') + 1).toLowerCase();//图片格式
-	            var base64 = canvas.toDataURL('image/' + ext, quality);
-	            that.loading = false
-	            // 回调函数返回base64的值
-	            // console.log(base64)
-	            if (that.imgArr.length <= that.imgMax - 1) {
-	              that.imgArr.unshift('')
-	              that.imgArr.splice(0, 1, base64);//替换数组数据的方法，此处不能使用：that.imgArr[index] = url;
-	              console.log(that.imgArr)
-	              // 超出最大限制就隐藏加号
-	              if (that.imgArr.length >= that.imgMax) {
-	                console.log('已经'+ that.imgMax +'张了')
-	                that.newFile = false
-	                that.$materialize.toast({
-	                	html: '最多'+that.imgMax+'张',
-	                	displayLength: 1500
-	                })
-	              }
-	            }
+	            
+	            // var img_orient = that.getPhotoOrientation(files.item(dd))
+	            that.$EXIF.EXIF.getData(files.item(dd), function () {
+	            	var orient = that.$EXIF.EXIF.getTag(this, "Orientation");
+	            	if (orient == 6) {
+	            		//生成canvas
+			            var canvas = document.createElement('canvas');
+			            var ctx = canvas.getContext('2d');
+			            // 创建属性节点
+			            var anw = document.createAttribute('width');
+			            anw.nodeValue = w;
+			            var anh = document.createAttribute('height');
+			            anh.nodeValue = h;
+			            canvas.setAttributeNode(anw);
+			            canvas.setAttributeNode(anh);
+
+									ctx.save();
+									ctx.translate(w / 2, h / 2);
+									ctx.rotate(90 * Math.PI / 180);
+									ctx.drawImage(image, -w/2, -h/2, w, h);
+									ctx.restore();
+
+			            image.style.width = '100%';
+			            var ext = image.src.substring(image.src.lastIndexOf('.') + 1).toLowerCase();//图片格式
+			            var base64 = canvas.toDataURL('image/' + ext, quality);
+			            that.loading = false
+			            // 回调函数返回base64的值
+			            // console.log(base64)
+			            $(document).ready(function(){
+			            	$('.materialboxed').materialbox();
+			            });
+			            if (that.imgArr.length <= that.imgMax - 1) {
+			              that.imgArr.unshift('')
+			              that.imgArr.splice(0, 1, base64);//替换数组数据的方法，此处不能使用：that.imgArr[index] = url;
+			              // 超出最大限制就隐藏加号
+			              if (that.imgArr.length >= that.imgMax) {
+			                console.log('已经'+ that.imgMax +'张了')
+			                that.newFile = false
+			                that.$materialize.toast({
+			                	html: '最多'+that.imgMax+'张',
+			                	displayLength: 1500
+			                })
+			              }
+			            }
+	            	} else {
+	            		var canvas = document.createElement('canvas');
+			            var ctx = canvas.getContext('2d');
+			            // 创建属性节点
+			            var anw = document.createAttribute('width');
+			            anw.nodeValue = w;
+			            var anh = document.createAttribute('height');
+			            anh.nodeValue = h;
+			            canvas.setAttributeNode(anw);
+			            canvas.setAttributeNode(anh);
+			            ctx.drawImage(image, 0, 0, w, h);
+			            image.style.width = '100%';
+			            var ext = image.src.substring(image.src.lastIndexOf('.') + 1).toLowerCase();//图片格式
+			            var base64 = canvas.toDataURL('image/' + ext, quality);
+			            that.loading = false
+			            // 回调函数返回base64的值
+			            // console.log(base64)
+			            $(document).ready(function(){
+			            	$('.materialboxed').materialbox();
+			            });
+			            if (that.imgArr.length <= that.imgMax - 1) {
+			              that.imgArr.unshift('')
+			              that.imgArr.splice(0, 1, base64);//替换数组数据的方法，此处不能使用：that.imgArr[index] = url;
+			              // 超出最大限制就隐藏加号
+			              if (that.imgArr.length >= that.imgMax) {
+			                console.log('已经'+ that.imgMax +'张了')
+			                that.newFile = false
+			                that.$materialize.toast({
+			                	html: '最多'+that.imgMax+'张',
+			                	displayLength: 1500
+			                })
+			              }
+			            }
+	            	}
+	            });
 	          }
 	        }
-
 	        if (dd < files.length - 1) {
 	          dd++;
 	        } else {
@@ -200,7 +240,7 @@ export default {
 		  	img: this.imgArr
 			};
 			$.ajax({
-				url: 'http://192.168.0.168/diary-test/api/write.php',
+				url: 'http://192.168.1.105/diary-test/api/write.php',
 			  type: 'post',
 			  data: json,
 			  dataType: 'json',
