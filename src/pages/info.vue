@@ -1,6 +1,6 @@
 <template>
 	<transition name="slide">
-	  <div class="page info">
+	  <div class="page info" v-on:scroll.passive="onScroll" ref="page">
 	  	<transition name="fade">
 		  	<div class="wrapperBox active" v-show="loading">
 					<div class="inner">
@@ -63,7 +63,7 @@
 				  </nav>
 				</div>
 
-				<pre id="info_textarea" class="info_textarea" @click="editInfo()">{{infoData.info}}</pre>
+				<div id="info_textarea" class="info_textarea" @click="editInfo()">{{infoData.info}}</div>
 				<textarea id="input_textarea" :oninput="changeInfo()" v-model="input_textarea"></textarea>
 				
 				<p class="creatTime" id="creatTime">{{infoData.time}}</p>
@@ -139,6 +139,7 @@ export default {
   	editInfo () {
   		$("#info_textarea").hide();
 			$("#creatTime").hide();
+			$(".fileInputBox").hide();
 			$("#input_textarea").show().focus();
   	},
   	changeInfo () {
@@ -204,9 +205,17 @@ export default {
 
 			    $("#info_textarea").show();
 			    $("#creatTime").show();
+			    $(".fileInputBox").show();
 			    $("#input_textarea").hide();
 			  }
 			})
+  	},
+  	onScroll () {
+  		if (this.$refs.page.scrollTop > 0) {
+  			$("nav").addClass("shadow")
+  		} else {
+  			$("nav").removeClass("shadow")
+  		}
   	}
   }
 }

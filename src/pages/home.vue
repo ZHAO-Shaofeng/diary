@@ -253,6 +253,10 @@ export default {
   	if (to.path == '/home') {
   		if (isUpdata === 'true') {
   			this.loading = true
+  			this.noData = false
+	    	this.finish = true
+  			this.page = 1
+  			this.$refs.page.scrollTop = 0
   			this.getData()
   		}
   	}
