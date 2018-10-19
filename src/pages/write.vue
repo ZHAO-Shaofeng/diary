@@ -240,7 +240,7 @@ export default {
 		  	img: this.imgArr
 			};
 			$.ajax({
-				url: 'http://192.168.1.105/diary-test/api/write.php',
+				url: 'http://love.s1.natapp.cc/api/write.php',
 			  type: 'post',
 			  data: json,
 			  dataType: 'json',
