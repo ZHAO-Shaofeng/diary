@@ -73,7 +73,7 @@
 						<div class="row" id="filetainer" v-for="(image, index) in infoData.img" :key="index">
 				      <div class="col s3">
 				      	<div class="item">
-				      		<img class="materialboxed" data-caption="" :src="'http://192.168.1.105/diary-test/'+image">
+				      		<img class="materialboxed" data-caption="" :src="'http://love.s1.natapp.cc/'+image">
 				      	</div>
 				      </div>
 				    </div>
