@@ -1,6 +1,6 @@
 <template>
-	<div class="new-page-container">
-	  <div class="page home" v-on:scroll.passive="onScroll" ref="page">
+	<div>
+	  <div class="page home">
 	  	<transition name="fade">
 		  	<div class="wrapperBox active" v-show="loading">
 					<div class="inner">
@@ -53,29 +53,46 @@
 			      	<i class="material-icons">arrow_back</i>
 			      </a>
 			      <a href="javascript:;" class="brand-logo"><i class="material-icons">assignment</i></a>
+			      <div class="right-operate more-loader">
+			      	<transition name="fade">
+								<div class="preloader-wrapper loadmore-icon small active" v-show="loadmore">
+									<div class="spinner-layer spinner-black-only">
+										<div class="circle-clipper left">
+											<div class="circle"></div>
+										</div><div class="gap-patch">
+											<div class="circle"></div>
+										</div><div class="circle-clipper right">
+											<div class="circle"></div>
+										</div>
+									</div>
+								</div>
+							</transition>
+			      </div>
 			    </div>
 			  </nav>
 			</div>
 
-			<div class="timeline">
-				<div class="timeitem" v-for="(item, index) in dataList" :key="index">
-					<div class="flexbox" @click="goInfo(item.id)">
-						<div class="left">
-							<div class="ico"></div>
-							<div class="time">{{item.date}}</div>
-						</div>
-						<div class="right">
-							<div class="info">{{item.info}}</div>
+			<div class="page-content" v-on:scroll.passive="onScroll" ref="page">
+				<div class="timeline">
+					<div class="timeitem" v-for="(item, index) in dataList" :key="index">
+						<div class="flexbox" @click="goInfo(item.id)">
+							<div class="left">
+								<div class="ico"></div>
+								<div class="time">{{item.date}}</div>
+							</div>
+							<div class="right">
+								<div class="info">{{item.info}}</div>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="timeitem no-pdb" v-show="noData">
-					<div class="flexbox">
-						<div class="left">
-							<div class="ico"></div>
-						</div>
-						<div class="right">
-							<div class="info">树洞给你挖空啦</div>
+					<div class="timeitem no-pdb" v-show="noData">
+						<div class="flexbox">
+							<div class="left">
+								<div class="ico"></div>
+							</div>
+							<div class="right">
+								<div class="info">树洞给你挖空啦</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -85,45 +102,6 @@
 				<div class="btn-floating btn-large waves-effect waves-dark red" @click="goWrite">
 					<i class="material-icons">create</i>
 				</div>
-			</div>
-
-			<div class="preloader-wrapper more-loader small active">
-				<div class="spinner-layer spinner-blue">
-			    <div class="circle-clipper left">
-			      <div class="circle"></div>
-			    </div><div class="gap-patch">
-			      <div class="circle"></div>
-			    </div><div class="circle-clipper right">
-			      <div class="circle"></div>
-			    </div>
-			  </div>
-			  <div class="spinner-layer spinner-red">
-			    <div class="circle-clipper left">
-			      <div class="circle"></div>
-			    </div><div class="gap-patch">
-			      <div class="circle"></div>
-			    </div><div class="circle-clipper right">
-			      <div class="circle"></div>
-			    </div>
-			  </div>
-			  <div class="spinner-layer spinner-yellow">
-			    <div class="circle-clipper left">
-			      <div class="circle"></div>
-			    </div><div class="gap-patch">
-			      <div class="circle"></div>
-			    </div><div class="circle-clipper right">
-			      <div class="circle"></div>
-			    </div>
-			  </div>
-			  <div class="spinner-layer spinner-green">
-			    <div class="circle-clipper left">
-			      <div class="circle"></div>
-			    </div><div class="gap-patch">
-			      <div class="circle"></div>
-			    </div><div class="circle-clipper right">
-			      <div class="circle"></div>
-			    </div>
-			  </div>
 			</div>
 	  </div>
 
@@ -153,16 +131,17 @@ export default {
     	],
     	loading: false,
     	page: 1,
-			pagesize: 10,
+			pagesize: 20,
 			finish: true,
-			noData: false
+			noData: false,
+			loadmore: false
     }
   },
   mounted () {
   	let touchtime = new Date().getTime();
   	$("#nav").on("click", function(){
   		if( new Date().getTime() - touchtime < 500 ){
-  			$(".page").animate({scrollTop:"0px"},800)
+  			$(".page-content").animate({scrollTop:"0px"},800)
   		}else{
   			touchtime = new Date().getTime();
   		}
@@ -214,8 +193,9 @@ export default {
   		let scrollTop = this.$refs.page.scrollTop;
   		let windowHeight = this.$refs.page.clientHeight;
   		let scrollHeight = this.$refs.page.scrollHeight;
-  		if((scrollTop / (scrollHeight - windowHeight) >= 0.6) && this.finish){
+  		if((scrollTop / (scrollHeight - windowHeight) >= 0.7) && this.finish){
   			this.finish = false
+  			this.loadmore = true
   			$.ajax({
   				url: 'http://love.s1.natapp.cc/api/list.php',
   				type: 'get',
@@ -229,9 +209,11 @@ export default {
 	  					this.dataList = this.dataList.concat(res.data)
 	  					this.page += 1
 	  					this.finish = true
+	  					this.loadmore = false
 	  				}else{
 			    		this.noData = true
 				    	this.finish = false
+				    	this.loadmore = false
 				    }
   				}
   			})

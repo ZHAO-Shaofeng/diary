@@ -46,43 +46,55 @@
 				</div>
 			</transition>
 
-	    <div class="info-form">
+	    
 
-				<div class="navbar-fixed">
-				  <nav>
-				    <div class="nav-wrapper">
-				      <a href="javascript:;" class="btn-floating btn-large waves-effect waves-dark left-operate" @click="goBack">
-				      	<i class="material-icons">arrow_back</i>
-				      </a>
-				      <a class="brand-logo">树洞</a>
-				      <button type="button" class="btn-floating btn-large waves-effect waves-dark right-operate" @click="ok">
-				      	<i class="material-icons">done</i>
-				      </button>
-				    </div>
-				  </nav>
-				</div>
+			<div class="navbar-fixed">
+			  <nav>
+			    <div class="nav-wrapper">
+			      <a href="javascript:;" class="btn-floating btn-large waves-effect waves-dark left-operate" @click="goBack">
+			      	<i class="material-icons">arrow_back</i>
+			      </a>
+			      <a class="brand-logo">树洞</a>
+			      <button type="button" class="btn-floating btn-large waves-effect waves-dark right-operate" @click="ok">
+			      	<i class="material-icons">done</i>
+			      </button>
+			    </div>
+			  </nav>
+			</div>
 
-				<textarea name="info" placeholder="今天......" v-model="info_textarea"></textarea>
-				
-				<div class="fileInputBox">
-					<div class="container">
-						<div class="row" id="filetainer">
-				      <div class="col s3" v-for="(item, index) in imgArr" :key="index">
-				      	<div class="item">
-				      		<img class="materialboxed" data-caption="" :src="item">
-				      	</div>
-				      	<i class="material-icons deleteImg" @click="deleteImg">close</i>
-				      </div>
-				      <div class="col s3 newFile" v-show="newFile">
-				      	<div class="item">
-				      		<i class="material-icons">add</i>
-				      		<input type="file" accept="image/*" multiple="multiple" @change="changeImg($event)">
-				      	</div>
-				      </div>
-				    </div>
+			<div class="page-content">
+				<div class="info-form">
+					<textarea name="info" v-on:scroll.passive="onScroll" ref="page" placeholder="今天......" v-model="info_textarea"></textarea>
+					
+					<div class="fileInputBox" v-show="imgArr.length!==0">
+						<div class="container">
+							<div class="row" id="filetainer">
+					      <div class="col s3" v-for="(item, index) in imgArr" :key="index">
+					      	<div class="item">
+					      		<img class="materialboxed" data-caption="" :src="item">
+					      	</div>
+					      	<i class="material-icons deleteImg" @click="deleteImg">close</i>
+					      </div>
+					      <!-- <div class="col s3 newFile" v-show="newFile">
+					      	<div class="item">
+					      		<i class="material-icons">add</i>
+					      		<input type="file" accept="image/*" multiple="multiple" @change="changeImg($event)">
+					      	</div>
+					      </div> -->
+					    </div>
+						</div>
 					</div>
 				</div>
 			</div>
+	
+			<transition name="scale">
+				<div class="fixed-action-btn" v-show="newFile">
+					<div class="btn-floating btn-large waves-effect waves-dark red">
+						<i class="material-icons">image</i>
+						<input type="file" accept="image/*" multiple="multiple" @change="changeImg($event)">
+					</div>
+				</div>
+			</transition>
 	  </div>
 	</transition>
 </template>
@@ -93,7 +105,7 @@ export default {
     return {
     	loading: false,
     	imgArr: [],
-			imgMax: 8,
+			imgMax: 3,
 			newFile: true,
 			info_textarea: ''
     }
@@ -239,23 +251,37 @@ export default {
 		  	info: this.info_textarea,
 		  	img: this.imgArr
 			};
-			$.ajax({
-				url: 'http://love.s1.natapp.cc/api/write.php',
-			  type: 'post',
-			  data: json,
-			  dataType: 'json',
-			  beforeSend: () => {
-			  	this.loading = true
-			  },
-			  success: res => {
-			    if (res.code === 200) {
-			    	this.loading = false
-			    	localStorage.setItem("isUpdata","true")
-			    	setTimeout(this.goBack(),1000)
-			    }
-			  }
-			})
-	  }
+			if (this.info_textarea=='' && this.imgArr.length===0) {
+				this.$materialize.toast({
+					html: '日记不能为空',
+					displayLength: 1500
+				})
+			}else{
+				$.ajax({
+					url: 'http://love.s1.natapp.cc/api/write.php',
+				  type: 'post',
+				  data: json,
+				  dataType: 'json',
+				  beforeSend: () => {
+				  	this.loading = true
+				  },
+				  success: res => {
+				    if (res.code === 200) {
+				    	this.loading = false
+				    	localStorage.setItem("isUpdata","true")
+				    	setTimeout(this.goBack(),1000)
+				    }
+				  }
+				})
+			}
+	  },
+	  onScroll () {
+  		if (this.$refs.page.scrollTop > 0) {
+  			$("nav").addClass("shadow")
+  		} else {
+  			$("nav").removeClass("shadow")
+  		}
+  	}
   }
 }
 </script>

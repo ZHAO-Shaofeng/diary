@@ -1,6 +1,6 @@
 <template>
 	<transition name="slide">
-	  <div class="page info" v-on:scroll.passive="onScroll" ref="page">
+	  <div class="page info">
 	  	<transition name="fade">
 		  	<div class="wrapperBox active" v-show="loading">
 					<div class="inner">
@@ -46,7 +46,6 @@
 				</div>
 			</transition>
 
-	    <div class="info-form">
 
 				<button class="waves-effect waves-dark btn btn-large red saveUpdate-btn" @click="saveChange" type="button">保存</button>
 				<div class="navbar-fixed">
@@ -63,33 +62,37 @@
 				  </nav>
 				</div>
 
-				<div id="info_textarea" class="info_textarea" @click="editInfo()">{{infoData.info}}</div>
-				<textarea id="input_textarea" :oninput="changeInfo()" v-model="input_textarea"></textarea>
-				
-				<p class="creatTime" id="creatTime">{{infoData.time}}</p>
+				<div class="page-content" v-on:scroll.passive="onScroll" ref="page">
+					<div class="info-form">
+						<div id="info_textarea" class="info_textarea">{{infoData.info}}</div><!-- @click="editInfo()" -->
+						<textarea id="input_textarea" :oninput="changeInfo()" v-model="input_textarea"></textarea>
+						
+						<p class="creatTime" id="creatTime">{{infoData.time}}</p>
 
-				<div class="fileInputBox">
-					<div class="container">
-						<div class="row" id="filetainer" v-for="(image, index) in infoData.img" :key="index">
-				      <div class="col s3">
-				      	<div class="item">
-				      		<img class="materialboxed" data-caption="" :src="'http://love.s1.natapp.cc/'+image">
-				      	</div>
-				      </div>
-				    </div>
+						<div class="fileInputBox">
+							<div class="container">
+								<div class="row" id="filetainer" v-for="(image, index) in infoData.img" :key="index">
+						      <div class="col s3">
+						      	<div class="item">
+						      		<img class="materialboxed" data-caption="" :src="'http://love.s1.natapp.cc/'+image">
+						      	</div>
+						      </div>
+						    </div>
+							</div>
+						</div>
 					</div>
 				</div>
 
 				<div id="modal1" class="modal bottom-sheet">
 					<div class="modal-content">
-					  <p class="red-text">确定要删除吗</p>
+					  <!-- <p class="red-text">确定要删除吗</p> -->
+					  <p class="red-text">无法改变，也无法抹去</p>
 					</div>
-					<div class="modal-footer">
+					<!-- <div class="modal-footer">
 					  <a href="javascript:;" @click="deleteInfo" class="modal-action modal-close waves-effect waves-dark btn-flat">确定</a>
-					</div>
+					</div> -->
 				</div>
 
-			</div>
 	  </div>
 	 </transition>
 </template>
