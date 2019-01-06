@@ -55,9 +55,9 @@
 				      	<i class="material-icons">arrow_back</i>
 				      </a>
 				      <a class="brand-logo">{{infoData.date}}</a>
-				      <a href="#modal1" class="btn-floating btn-large waves-effect waves-dark modal-trigger right-operate">
+				      <!-- <a href="#modal1" class="btn-floating btn-large waves-effect waves-dark modal-trigger right-operate">
 				      	<i class="material-icons">delete</i>
-				      </a>
+				      </a> -->
 				    </div>
 				  </nav>
 				</div>
@@ -85,12 +85,11 @@
 
 				<div id="modal1" class="modal bottom-sheet">
 					<div class="modal-content">
-					  <!-- <p class="red-text">确定要删除吗</p> -->
-					  <p class="red-text">无法改变，也无法抹去</p>
+					  <p class="red-text">确定要删除吗</p>
 					</div>
-					<!-- <div class="modal-footer">
+					<div class="modal-footer">
 					  <a href="javascript:;" @click="deleteInfo" class="modal-action modal-close waves-effect waves-dark btn-flat">确定</a>
-					</div> -->
+					</div>
 				</div>
 
 	  </div>
