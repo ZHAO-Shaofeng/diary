@@ -71,10 +71,13 @@
 
 						<div class="fileInputBox">
 							<div class="container">
-								<div class="row" id="filetainer" v-for="(image, index) in infoData.img" :key="index">
+								<div class="row" id="filetainer"> <!--v-for="(image, index) in infoData.img" :key="index"-->
 						      <div class="col s3">
 						      	<div class="item">
-						      		<img class="materialboxed" data-caption="" :src="'http://love.s1.natapp.cc/'+image">
+						      		<img class="previewer-demo-img" v-for="(item, index) in list" @click="show(index)" :src="item.src"> <!--:src="'http://love.s1.natapp.cc/'+image"-->
+						      		<div v-transfer-dom>
+						      			<previewer :list="list" ref="previewer" :options="options" @on-index-change="logIndexChange"></previewer>
+						      		</div>
 						      	</div>
 						      </div>
 						    </div>
@@ -97,6 +100,7 @@
 </template>
 
 <script>
+import { Previewer, TransferDom } from 'vux'
 let img = require('../assets/images/logo.png');
 
 export default {
@@ -110,8 +114,46 @@ export default {
 				// info: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
 				// time: "2018-09-30 23:43:18"
     	},
-    	input_textarea: ''	// 编辑框
+    	input_textarea: '',	// 编辑框
+    	list: [
+	    	{
+	        msrc: 'http://ww1.sinaimg.cn/thumbnail/663d3650gy1fplwu9ze86j20m80b40t2.jpg',
+	        src: 'http://ww1.sinaimg.cn/large/663d3650gy1fplwu9ze86j20m80b40t2.jpg',
+	        w: 800,
+	        h: 400
+	      },
+	      {
+	        msrc: 'http://ww1.sinaimg.cn/thumbnail/663d3650gy1fplwvqwuoaj20xc0p0t9s.jpg',
+	        src: 'http://ww1.sinaimg.cn/large/663d3650gy1fplwvqwuoaj20xc0p0t9s.jpg',
+	        w: 1200,
+	        h: 900
+	      }, {
+	        msrc: 'http://ww1.sinaimg.cn/thumbnail/663d3650gy1fplwwcynw2j20p00b4js9.jpg',
+	        src: 'http://ww1.sinaimg.cn/large/663d3650gy1fplwwcynw2j20p00b4js9.jpg'
+	      }
+      ],
+      options: {
+        getThumbBoundsFn (index) {
+          // find thumbnail element
+          let thumbnail = document.querySelectorAll('.previewer-demo-img')[index]
+          // get window scroll Y
+          let pageYScroll = window.pageYOffset || document.documentElement.scrollTop
+          // optionally get horizontal scroll
+          // get position of element relative to viewport
+          let rect = thumbnail.getBoundingClientRect()
+          // w = width
+          return {x: rect.left, y: rect.top + pageYScroll, w: rect.width}
+          // Good guide on how to get element coordinates:
+          // http://javascript.info/tutorial/coordinates
+        }
+      }
     }
+  },
+  directives: {
+    TransferDom
+  },
+  components: {
+    Previewer
   },
   mounted () {
   	$('.modal').modal();
@@ -135,6 +177,12 @@ export default {
 		})
   },
   methods: {
+  	logIndexChange (arg) {
+      console.log(arg)
+    },
+    show (index) {
+      this.$refs.previewer.show(index)
+    },
   	goBack () {
   		this.$router.back()
   	},
