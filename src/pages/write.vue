@@ -112,7 +112,8 @@ export default {
   },
   methods: {
   	goBack () {
-  		this.$router.back()
+  		// this.$router.back()
+  		this.$router.push('/home');
   	},
   	// exif.js 获取照片拍照方向信息
   	getPhotoOrientation(img) {

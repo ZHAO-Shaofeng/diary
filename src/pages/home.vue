@@ -52,8 +52,9 @@
 			      <a href="https://xn--xkrt4xga.xn--6qq986b3xl/" class="btn-floating btn-large waves-effect waves-dark left-operate">
 			      	<i class="material-icons">arrow_back</i>
 			      </a>
-			      <a href="javascript:;" class="brand-logo"><i class="material-icons">assignment</i></a>
-			      <div class="right-operate more-loader">
+			      <a href="javascript:;" class="brand-logo" @click="showVisitLog" v-show="!is_root"><i class="material-icons">assignment</i></a>
+			      <a href="javascript:;" class="brand-logo" v-show="is_root"><i class="material-icons">done</i></a>
+			      <div class="right-operate more-loader" @click="isRoot">
 			      	<transition name="fade">
 								<div class="preloader-wrapper loadmore-icon small active" v-show="loadmore">
 									<div class="spinner-layer spinner-black-only">
@@ -103,6 +104,18 @@
 					<i class="material-icons">create</i>
 				</div>
 			</div>
+
+			<div id="visitLog" class="modal modal-fixed-footer">
+				<div class="modal-content">
+					<h5>访问记录</h5>
+					<p v-for="(item, index) in visitLogList" :key="index">
+						<span>{{item.time}}</span> ——— <span>{{item.is_root}}</span>
+					</p>
+				</div>
+				<div class="modal-footer">
+					<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">关闭</a>
+				</div>
+			</div>
 	  </div>
 
 	  <router-view />
@@ -114,30 +127,36 @@ export default {
   data () {
     return {
     	dataList: [
-	   //  	{
-	   //  		date: "2018-09-30",
-				// 	id: "100",
-				// 	img: [],
-				// 	info: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
-				// 	time: "2018-09-30 23:43:18"
-				// },
-				// {
-				// 	date: "2018-09-18",
-				// 	id: "92",
-				// 	img: [],
-				// 	info: "撒打算大苏打",
-				// 	time: "2018-09-18 20:52:19"
-				// }
+    	// {
+    	// 	date: "2018-09-30",
+    	// 	id: "100",
+    	// 	img: [],
+    	// 	info: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
+    	// 	time: "2018-09-30 23:43:18"
+    	// },
+    	// {
+    	// 	date: "2018-09-18",
+    	// 	id: "92",
+    	// 	img: [],
+    	// 	info: "撒打算大苏打",
+    	// 	time: "2018-09-18 20:52:19"
+    	// }
     	],
     	loading: false,
     	page: 1,
 			pagesize: 20,
 			finish: true,
 			noData: false,
-			loadmore: false
+			loadmore: false,
+			is_root: false,
+			visitLogList: []
     }
   },
   mounted () {
+  	$('.modal').modal();
+  	sessionStorage.setItem('root_clickCount', 0);
+  	sessionStorage.setItem('visit_clickCount', 0);
+
   	let touchtime = new Date().getTime();
   	$("#nav").on("click", function(){
   		if( new Date().getTime() - touchtime < 500 ){
@@ -147,9 +166,95 @@ export default {
   		}
   	});
 
-  	this.getData()
+  	this.visitLog();
+  	this.getData();
   },
   methods: {
+  	// 生成随机数
+  	generateMixed (n) {
+  		let res = "";
+  		let chars = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+  		for(var i = 0; i < n ; i ++) {
+  			var id = Math.ceil(Math.random()*35);
+  			res += chars[id];
+  		}
+  		return res;
+  	},
+  	// 记录访问
+  	visitLog () {
+  		let uid = sessionStorage.getItem('uid');
+	  	if (!uid) {
+	  		$.ajax({
+	  			url: 'http://love.s1.natapp.cc/api/visit.php',
+	  			type: 'post',
+	  			data: {
+	  				uid: this.generateMixed(10),
+	  				url: 'http://love.s1.natapp.cc'
+	  			},
+	  			dataType: 'json',
+	  			success: function(res){
+	  				sessionStorage.setItem('uid', res.data.uid);
+	  			}
+	  		})
+	  	}
+  	},
+  	isRoot () {
+  		let that = this;
+  		let count = sessionStorage.getItem('root_clickCount');
+  		let uid = sessionStorage.getItem('uid');
+  		if (count) {
+  			if (parseInt(count) >= 4) {
+  				$.ajax({
+  					url: 'http://love.s1.natapp.cc/api/is_root.php',
+  					type: 'post',
+  					data: {
+  						uid: uid
+  					},
+  					dataType: 'json',
+  					beforeSend: () => {
+  						that.loadmore = true;
+  					},
+  					success: function(res){
+  						that.is_root = true;
+  						that.loadmore = false;
+  						setTimeout(() => {
+  							that.is_root = false;
+  						},1500)
+						}
+					})
+  				sessionStorage.setItem('root_clickCount', 0);
+  			}else{
+  				count = parseInt(count)+1
+  				sessionStorage.setItem('root_clickCount', count);
+  			}
+  		}else{
+  			sessionStorage.setItem('root_clickCount', 0);
+  		}
+  	},
+  	// 展示访问记录
+  	showVisitLog () {
+  		let that = this;
+  		let count = sessionStorage.getItem('visit_clickCount');
+  		if (count) {
+  			if (parseInt(count) >= 4) {
+  				$.ajax({
+  					url: 'http://love.s1.natapp.cc/api/show_visit.php',
+  					type: 'get',
+  					dataType: 'json',
+  					success: function(res){
+  						that.visitLogList = res.data;
+  					}
+  				})
+  				$('#visitLog').modal('open');
+  				sessionStorage.setItem('visit_clickCount', 0);
+  			}else{
+  				count = parseInt(count)+1
+  				sessionStorage.setItem('visit_clickCount', count);
+  			}
+  		}else{
+  			sessionStorage.setItem('visit_clickCount', 0);
+  		}
+  	},
   	getData () {
   		$.ajax({
 			  url: 'http://love.s1.natapp.cc/api/list.php',

@@ -72,13 +72,13 @@
 						<div class="fileInputBox">
 							<div class="container">
 								<div class="row" id="filetainer"> <!--v-for="(image, index) in infoData.img" :key="index"-->
-						      <div class="col s3">
+						      <div class="col s3" v-for="(item, index) in imgList">
 						      	<div class="item">
-						      		<img class="previewer-demo-img" v-for="(item, index) in list" @click="show(index)" :src="item.src"> <!--:src="'http://love.s1.natapp.cc/'+image"-->
-						      		<div v-transfer-dom>
-						      			<previewer :list="list" ref="previewer" :options="options" @on-index-change="logIndexChange"></previewer>
-						      		</div>
+						      		<img class="previewer-demo-img" @click="show(index)" :src="item.src"> <!--:src="'http://love.s1.natapp.cc/'+image"-->
 						      	</div>
+						      </div>
+						      <div v-transfer-dom>
+						      	<previewer :list="imgList" ref="previewer" :options="options"></previewer>
 						      </div>
 						    </div>
 							</div>
@@ -115,23 +115,7 @@ export default {
 				// time: "2018-09-30 23:43:18"
     	},
     	input_textarea: '',	// 编辑框
-    	list: [
-	    	{
-	        msrc: 'http://ww1.sinaimg.cn/thumbnail/663d3650gy1fplwu9ze86j20m80b40t2.jpg',
-	        src: 'http://ww1.sinaimg.cn/large/663d3650gy1fplwu9ze86j20m80b40t2.jpg',
-	        w: 800,
-	        h: 400
-	      },
-	      {
-	        msrc: 'http://ww1.sinaimg.cn/thumbnail/663d3650gy1fplwvqwuoaj20xc0p0t9s.jpg',
-	        src: 'http://ww1.sinaimg.cn/large/663d3650gy1fplwvqwuoaj20xc0p0t9s.jpg',
-	        w: 1200,
-	        h: 900
-	      }, {
-	        msrc: 'http://ww1.sinaimg.cn/thumbnail/663d3650gy1fplwwcynw2j20p00b4js9.jpg',
-	        src: 'http://ww1.sinaimg.cn/large/663d3650gy1fplwwcynw2j20p00b4js9.jpg'
-	      }
-      ],
+    	imgList: [],
       options: {
         getThumbBoundsFn (index) {
           // find thumbnail element
@@ -164,9 +148,12 @@ export default {
 		  type: 'get',
 		  dataType: 'json',
 		  success: res => {
-		    this.loading = false
-		    this.infoData = res.data
-		    this.input_textarea = res.data.info
+		    this.loading = false;
+		    this.infoData = res.data;
+		    this.input_textarea = res.data.info;
+		    for(let i=0; i<res.data.img.length; i++){
+          this.imgList.push({src: res.data.img[i]})
+        }
 		    if (res.data.img.length < 1) {
 		    	$('.fileInputBox').hide();
 		    }
@@ -177,14 +164,12 @@ export default {
 		})
   },
   methods: {
-  	logIndexChange (arg) {
-      console.log(arg)
-    },
     show (index) {
-      this.$refs.previewer.show(index)
+      this.$refs.previewer.show(index);
     },
   	goBack () {
-  		this.$router.back()
+  		// this.$router.back();
+  		this.$router.push('/home');
   	},
   	editInfo () {
   		$("#info_textarea").hide();
