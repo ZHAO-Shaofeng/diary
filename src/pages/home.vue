@@ -166,7 +166,7 @@ export default {
   		}
   	});
 
-  	this.visitLog();
+  	// this.visitLog();
   	this.getData();
   },
   methods: {
@@ -258,6 +258,7 @@ export default {
   	getData () {
   		$.ajax({
 			  url: 'http://love.s1.natapp.cc/api/list.php',
+			  // url: 'http://192.168.0.200/hello/api/list.php',
 			  // url: 'http://192.168.1.105/diary-test/api/list.php',
 			  type: 'get',
 			  data: {
@@ -303,6 +304,7 @@ export default {
   			this.loadmore = true
   			$.ajax({
   				url: 'http://love.s1.natapp.cc/api/list.php',
+  				// url: 'http://192.168.0.200/hello/api/list.php',
   				type: 'get',
   				data: {
   					page: this.page+1,

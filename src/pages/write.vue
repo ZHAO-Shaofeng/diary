@@ -126,21 +126,18 @@ export default {
   	},
 	  changeImg(e) {
 	    var that = this;
-	    that.loading = true	// 等待
+	    that.loading = true;
 	    var imgLimit = 1024;
 	    var files = e.target.files;
-	    // console.log(files);
 	    var image = new Image();
-	    console.log('最多传'+that.imgMax+'张')
-	    console.log('共上传'+files.length+'张');
 	    if (files.length > 0) {
 	      var dd = 0;
 	      var timer = setInterval(function () {
 	        if (files.item(dd).type != 'image/png' && files.item(dd).type != 'image/jpeg' && files.item(dd).type != 'image/gif') {
 	          return false
 	        }
-	        if (files.item(dd).size > imgLimit * 102400) {
-	          //to do sth
+	        if (files.item(dd).size > imgLimit * 10240) {
+	          // 文件过大
 	        } else {
 	          image.src = window.URL.createObjectURL(files.item(dd));
 	          image.onload = function () {
@@ -162,16 +159,16 @@ export default {
 			            var ctx = canvas.getContext('2d');
 			            // 创建属性节点
 			            var anw = document.createAttribute('width');
-			            anw.nodeValue = w;
+			            anw.nodeValue = h;
 			            var anh = document.createAttribute('height');
-			            anh.nodeValue = h;
+			            anh.nodeValue = w;
 			            canvas.setAttributeNode(anw);
 			            canvas.setAttributeNode(anh);
 
 									ctx.save();
-									ctx.translate(w / 2, h / 2);
+									// ctx.translate(w / 2, h / 2);
 									ctx.rotate(90 * Math.PI / 180);
-									ctx.drawImage(image, -w/2, -h/2, w, h);
+									ctx.drawImage(image, 0, -h, w, h);
 									ctx.restore();
 
 			            image.style.width = '100%';
@@ -188,7 +185,6 @@ export default {
 			              that.imgArr.splice(0, 1, base64);//替换数组数据的方法，此处不能使用：that.imgArr[index] = url;
 			              // 超出最大限制就隐藏加号
 			              if (that.imgArr.length >= that.imgMax) {
-			                console.log('已经'+ that.imgMax +'张了')
 			                that.newFile = false
 			                that.$materialize.toast({
 			                	html: '最多'+that.imgMax+'张',
@@ -221,7 +217,6 @@ export default {
 			              that.imgArr.splice(0, 1, base64);//替换数组数据的方法，此处不能使用：that.imgArr[index] = url;
 			              // 超出最大限制就隐藏加号
 			              if (that.imgArr.length >= that.imgMax) {
-			                console.log('已经'+ that.imgMax +'张了')
 			                that.newFile = false
 			                that.$materialize.toast({
 			                	html: '最多'+that.imgMax+'张',
@@ -239,6 +234,8 @@ export default {
 	          clearInterval(timer);
 	        }
 	      }, 1000)
+	    }else{
+	    	that.loading = false;
 	    }
 	  },
 	  deleteImg(index) {

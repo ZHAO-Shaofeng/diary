@@ -153,6 +153,7 @@ nav{
     .right-operate{
         float: right;
         margin: 0;
+        user-select: none;
         box-shadow: none !important;
         background-color: #fff !important;
         i{color: rgba(0,0,0,.87);}
