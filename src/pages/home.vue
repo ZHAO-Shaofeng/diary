@@ -131,7 +131,7 @@ export default {
     	// 	date: "2018-09-30",
     	// 	id: "100",
     	// 	img: [],
-    	// 	info: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
+    	// 	info: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
     	// 	time: "2018-09-30 23:43:18"
     	// },
     	// {
@@ -166,7 +166,7 @@ export default {
   		}
   	});
 
-  	// this.visitLog();
+  	this.visitLog();
   	this.getData();
   },
   methods: {
@@ -258,8 +258,6 @@ export default {
   	getData () {
   		$.ajax({
 			  url: 'http://love.s1.natapp.cc/api/list.php',
-			  // url: 'http://192.168.0.200/hello/api/list.php',
-			  // url: 'http://192.168.1.105/diary-test/api/list.php',
 			  type: 'get',
 			  data: {
 			  	page: this.page,

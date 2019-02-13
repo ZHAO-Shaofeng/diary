@@ -73,7 +73,7 @@
 					      	<div class="item">
 					      		<img class="materialboxed" data-caption="" :src="item">
 					      	</div>
-					      	<i class="material-icons deleteImg" @click="deleteImg">close</i>
+					      	<i class="material-icons deleteImg" @click="deleteImg(index)">close</i>
 					      </div>
 					      <!-- <div class="col s3 newFile" v-show="newFile">
 					      	<div class="item">
@@ -105,7 +105,7 @@ export default {
     return {
     	loading: false,
     	imgArr: [],
-			imgMax: 3,
+			imgMax: 8,
 			newFile: true,
 			info_textarea: ''
     }
@@ -134,106 +134,96 @@ export default {
 	      var dd = 0;
 	      var timer = setInterval(function () {
 	        if (files.item(dd).type != 'image/png' && files.item(dd).type != 'image/jpeg' && files.item(dd).type != 'image/gif') {
-	          return false
+	        	that.loading = false;
+	          that.$materialize.toast({
+	          	html: '请上传图片格式(png、jpeg、gif)！',
+	          	displayLength: 1500
+	          })
+	          clearInterval(timer);
+	          return false;
 	        }
 	        if (files.item(dd).size > imgLimit * 10240) {
 	          // 文件过大
-	        } else {
-	          image.src = window.URL.createObjectURL(files.item(dd));
-	          image.onload = function () {
-	            // 默认按比例压缩
-	            var w = image.width,
-	              	h = image.height,
-	              	scale = w / h
-	            w = 500
-	            h = w / scale
-	            // 默认图片质量为0.7，quality值越小，所绘制出的图像越模糊
-	            var quality = 1;
-	            
-	            // var img_orient = that.getPhotoOrientation(files.item(dd))
-	            that.$EXIF.EXIF.getData(files.item(dd), function () {
-	            	var orient = that.$EXIF.EXIF.getTag(this, "Orientation");
-	            	if (orient == 6) {
-	            		//生成canvas
-			            var canvas = document.createElement('canvas');
-			            var ctx = canvas.getContext('2d');
-			            // 创建属性节点
-			            var anw = document.createAttribute('width');
-			            anw.nodeValue = h;
-			            var anh = document.createAttribute('height');
-			            anh.nodeValue = w;
-			            canvas.setAttributeNode(anw);
-			            canvas.setAttributeNode(anh);
-
-									ctx.save();
-									// ctx.translate(w / 2, h / 2);
-									ctx.rotate(90 * Math.PI / 180);
-									ctx.drawImage(image, 0, -h, w, h);
-									ctx.restore();
-
-			            image.style.width = '100%';
-			            var ext = image.src.substring(image.src.lastIndexOf('.') + 1).toLowerCase();//图片格式
-			            var base64 = canvas.toDataURL('image/' + ext, quality);
-			            that.loading = false
-			            // 回调函数返回base64的值
-			            // console.log(base64)
-			            $(document).ready(function(){
-			            	$('.materialboxed').materialbox();
-			            });
-			            if (that.imgArr.length <= that.imgMax - 1) {
-			              that.imgArr.unshift('')
-			              that.imgArr.splice(0, 1, base64);//替换数组数据的方法，此处不能使用：that.imgArr[index] = url;
-			              // 超出最大限制就隐藏加号
-			              if (that.imgArr.length >= that.imgMax) {
-			                that.newFile = false
-			                that.$materialize.toast({
-			                	html: '最多'+that.imgMax+'张',
-			                	displayLength: 1500
-			                })
-			              }
-			            }
-	            	} else {
-	            		var canvas = document.createElement('canvas');
-			            var ctx = canvas.getContext('2d');
-			            // 创建属性节点
-			            var anw = document.createAttribute('width');
-			            anw.nodeValue = w;
-			            var anh = document.createAttribute('height');
-			            anh.nodeValue = h;
-			            canvas.setAttributeNode(anw);
-			            canvas.setAttributeNode(anh);
-			            ctx.drawImage(image, 0, 0, w, h);
-			            image.style.width = '100%';
-			            var ext = image.src.substring(image.src.lastIndexOf('.') + 1).toLowerCase();//图片格式
-			            var base64 = canvas.toDataURL('image/' + ext, quality);
-			            that.loading = false
-			            // 回调函数返回base64的值
-			            // console.log(base64)
-			            $(document).ready(function(){
-			            	$('.materialboxed').materialbox();
-			            });
-			            if (that.imgArr.length <= that.imgMax - 1) {
-			              that.imgArr.unshift('')
-			              that.imgArr.splice(0, 1, base64);//替换数组数据的方法，此处不能使用：that.imgArr[index] = url;
-			              // 超出最大限制就隐藏加号
-			              if (that.imgArr.length >= that.imgMax) {
-			                that.newFile = false
-			                that.$materialize.toast({
-			                	html: '最多'+that.imgMax+'张',
-			                	displayLength: 1500
-			                })
-			              }
-			            }
-	            	}
-	            });
-	          }
-	        }
-	        if (dd < files.length - 1) {
-	          dd++;
-	        } else {
+	          that.loading = false;
+	          that.$materialize.toast({
+	          	html: '文件过大！',
+	          	displayLength: 1500
+	          })
 	          clearInterval(timer);
+	          return false;
 	        }
-	      }, 1000)
+          image.src = window.URL.createObjectURL(files.item(dd));
+          image.onload = function () {
+            // 默认按比例压缩
+            var w = image.width,
+              	h = image.height,
+              	scale = w / h
+            w = 1000
+            h = w / scale
+            // 默认图片质量为0.7，quality值越小，所绘制出的图像越模糊
+            var quality = 0.97;
+            that.$EXIF.EXIF.getData(files.item(dd), function () {
+            	var orient = that.$EXIF.EXIF.getTag(this, "Orientation");
+            	console.log(orient);
+            	//生成canvas
+            	var canvas = document.createElement('canvas');
+            	var ctx = canvas.getContext('2d');
+            	// 创建属性节点
+            	var anw = document.createAttribute('width');
+            	var anh = document.createAttribute('height');
+            	if (orient === 6) {
+		            anw.nodeValue = h;
+		            anh.nodeValue = w;
+		            canvas.setAttributeNode(anw);
+		            canvas.setAttributeNode(anh);
+								ctx.save();
+								ctx.rotate(90 * Math.PI / 180);
+								ctx.drawImage(image, 0, -h, w, h);
+								ctx.restore();
+            	} else if (orient === 8) {
+            		anw.nodeValue = h;
+		            anh.nodeValue = w;
+		            canvas.setAttributeNode(anw);
+		            canvas.setAttributeNode(anh);
+								ctx.save();
+								ctx.rotate(-90 * Math.PI / 180);
+								ctx.drawImage(image, -w, 0, w, h);
+								ctx.restore();
+            	} else {
+		            // 创建属性节点
+		            anw.nodeValue = w;
+		            anh.nodeValue = h;
+		            canvas.setAttributeNode(anw);
+		            canvas.setAttributeNode(anh);
+		            ctx.drawImage(image, 0, 0, w, h);
+            	}
+            	image.style.width = '100%';
+	            var base64 = canvas.toDataURL('image/jpeg', quality);
+	            // 回调函数返回base64的值
+	            that.loading = false
+	            $(document).ready(function(){
+	            	$('.materialboxed').materialbox();
+	            });
+	            if (that.imgArr.length <= that.imgMax - 1) {
+	              that.imgArr.unshift('');
+	              that.imgArr.splice(0, 1, base64);
+	              // 超出最大限制就隐藏加号
+	              if (that.imgArr.length >= that.imgMax) {
+	                that.newFile = false;
+	                that.$materialize.toast({
+	                	html: '最多'+that.imgMax+'张',
+	                	displayLength: 1500
+	                })
+	              }
+	            }
+            	if (dd < files.length - 1) {
+            		dd++;
+            	} else {
+            		clearInterval(timer);
+            	}
+            });
+          }
+	      }, 700);
 	    }else{
 	    	that.loading = false;
 	    }
@@ -241,7 +231,7 @@ export default {
 	  deleteImg(index) {
 	  	this.imgArr.splice(index, 1);
 	  	if (this.imgArr.length < this.imgMax) {
-	  		this.newFile = true
+	  		this.newFile = true;
 	  	}
 	  },
 	  ok () {
