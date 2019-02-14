@@ -185,7 +185,7 @@ export default {
             w = 1000
             h = w / scale
             // 默认图片质量为0.7，quality值越小，所绘制出的图像越模糊
-            var quality = 0.97;
+            var quality = 0.9;
             that.$EXIF.EXIF.getData(files.item(dd), function () {
             	var orient = that.$EXIF.EXIF.getTag(this, "Orientation");
             	//生成canvas
