@@ -49,12 +49,20 @@
 
 				<button class="waves-effect waves-dark btn btn-large red saveUpdate-btn" @click="saveChange" type="button">保存</button>
 				<div class="navbar-fixed">
-				  <nav>
+				  <nav class="inner">
 				    <div class="nav-wrapper">
 				      <a href="javascript:;" class="btn-floating btn-large waves-effect waves-dark left-operate" @click="goBack">
 				      	<i class="material-icons">arrow_back</i>
 				      </a>
-				      <a class="brand-logo">{{infoData.date}}</a>
+				      <!-- <a class="brand-logo">{{infoData.date}}</a> -->
+				      <!-- <a class="brand-logo"><i class="material-icons">favorite</i></a> -->
+				      <a class="brand-logo">
+				      	<div class="heart">
+				      		<div class="topLeft"></div>
+				      		<div class="topRight"></div>
+				      		<div class="bottom"></div>
+				      	</div>
+				      </a>
 				      <!-- <a href="#modal1" class="btn-floating btn-large waves-effect waves-dark modal-trigger right-operate">
 				      	<i class="material-icons">delete</i>
 				      </a> -->
@@ -71,11 +79,14 @@
 
 						<div class="fileInputBox">
 							<div class="container">
-								<div class="row" id="filetainer" v-for="(image, index) in infoData.img" :key="index">
-						      <div class="col s3">
+								<div class="row" id="filetainer"> <!--v-for="(image, index) in infoData.img" :key="index"-->
+						      <div class="col s4" v-for="(item, index) in imgList">
 						      	<div class="item">
-						      		<img class="materialboxed" data-caption="" :src="image">
+						      		<img class="previewer-demo-img" @click="show(index)" :src="item.src">
 						      	</div>
+						      </div>
+						      <div v-transfer-dom>
+						      	<previewer :list="imgList" ref="previewer" :options="options"></previewer>
 						      </div>
 						    </div>
 							</div>
@@ -97,6 +108,7 @@
 </template>
 
 <script>
+import { Previewer, TransferDom } from 'vux'
 let img = require('../assets/images/logo.png');
 
 export default {
@@ -107,11 +119,33 @@ export default {
 				// date: "2018-09-30",
 				// id: "100",
 				// img: [img],
-				// info: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
+				// info: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
 				// time: "2018-09-30 23:43:18"
     	},
-    	input_textarea: ''	// 编辑框
+    	input_textarea: '',	// 编辑框
+    	imgList: [],
+      options: {
+        getThumbBoundsFn (index) {
+          // find thumbnail element
+          let thumbnail = document.querySelectorAll('.previewer-demo-img')[index]
+          // get window scroll Y
+          let pageYScroll = window.pageYOffset || document.documentElement.scrollTop
+          // optionally get horizontal scroll
+          // get position of element relative to viewport
+          let rect = thumbnail.getBoundingClientRect()
+          // w = width
+          return {x: rect.left, y: rect.top + pageYScroll, w: rect.width}
+          // Good guide on how to get element coordinates:
+          // http://javascript.info/tutorial/coordinates
+        }
+      }
     }
+  },
+  directives: {
+    TransferDom
+  },
+  components: {
+    Previewer
   },
   mounted () {
   	$('.modal').modal();
@@ -122,9 +156,12 @@ export default {
 		  type: 'get',
 		  dataType: 'json',
 		  success: res => {
-		    this.loading = false
-		    this.infoData = res.data
-		    this.input_textarea = res.data.info
+		    this.loading = false;
+		    this.infoData = res.data;
+		    this.input_textarea = res.data.info;
+		    for(let i=0; i<res.data.img.length; i++){
+          this.imgList.push({src: res.data.img[i]})
+        }
 		    if (res.data.img.length < 1) {
 		    	$('.fileInputBox').hide();
 		    }
@@ -135,8 +172,12 @@ export default {
 		})
   },
   methods: {
+    show (index) {
+      this.$refs.previewer.show(index);
+    },
   	goBack () {
-  		this.$router.back()
+  		// this.$router.back();
+  		this.$router.push('/home');
   	},
   	editInfo () {
   		$("#info_textarea").hide();
@@ -214,13 +255,19 @@ export default {
   	},
   	onScroll () {
   		if (this.$refs.page.scrollTop > 0) {
-  			$("nav").addClass("shadow")
+  			$("nav.inner").addClass("shadow")
   		} else {
-  			$("nav").removeClass("shadow")
+  			$("nav.inner").removeClass("shadow")
   		}
   	}
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+	nav a.brand-logo{
+		height: 100%;
+		display: flex;
+		align-items: center;
+  }
+</style>

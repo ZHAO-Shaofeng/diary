@@ -14,6 +14,15 @@ Vue.config.productionTip = false
 Vue.prototype.$materialize = materialize
 Vue.prototype.$EXIF = EXIF
 
+sessionStorage.clear();
+
+router.beforeEach((to, from, next) => {
+  if (to.path == '/!') {
+  	router.push('/home');
+  }
+  next();
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -3,15 +3,14 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 var webpack = require('webpack')
+const vuxLoader = require('vux-loader')
 const vueLoaderConfig = require('./vue-loader.conf')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
-
-
-module.exports = {
+const webpackConfig = {
   context: path.resolve(__dirname, '../'),
   entry: {
     app: './src/main.js'
@@ -77,6 +76,10 @@ module.exports = {
       {
         test: /\.scss$/,
         loaders: ["style", "css", "sass"]
+      },
+      {
+        test: /\.less$/,
+        loader: 'less-loader'
       }
     ]
   },
@@ -93,3 +96,10 @@ module.exports = {
     child_process: 'empty'
   }
 }
+
+module.exports = vuxLoader.merge(webpackConfig, {
+  options: {},
+  plugins: [{
+    name: 'vux-ui'
+  }]
+})
