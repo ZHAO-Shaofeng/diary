@@ -49,7 +49,7 @@
 	    
 
 			<div class="navbar-fixed">
-			  <nav>
+			  <nav class="inner">
 			    <div class="nav-wrapper">
 			      <a href="javascript:;" class="btn-floating btn-large waves-effect waves-dark left-operate" @click="goBack">
 			      	<i class="material-icons">arrow_back</i>
@@ -66,21 +66,18 @@
 				<div class="info-form">
 					<textarea name="info" v-on:scroll.passive="onScroll" ref="page" placeholder="今天......" v-model="info_textarea"></textarea>
 					
-					<div class="fileInputBox" v-show="imgArr.length!==0">
+					<div class="fileInputBox" v-show="imgShowArr.length!==0">
 						<div class="container">
 							<div class="row" id="filetainer">
-					      <div class="col s3" v-for="(item, index) in imgArr" :key="index">
+					      <div class="col s4" v-for="(item, index) in imgShowArr" :key="index">
 					      	<div class="item">
-					      		<img class="materialboxed" data-caption="" :src="item">
+					      		<img class="previewer-demo-img" @click="show(index)" :src="item.src">
 					      	</div>
 					      	<i class="material-icons deleteImg" @click="deleteImg(index)">close</i>
 					      </div>
-					      <!-- <div class="col s3 newFile" v-show="newFile">
-					      	<div class="item">
-					      		<i class="material-icons">add</i>
-					      		<input type="file" accept="image/*" multiple="multiple" @change="changeImg($event)">
-					      	</div>
-					      </div> -->
+					      <div v-transfer-dom>
+					      	<previewer :list="imgShowArr" ref="previewer" :options="options"></previewer>
+					      </div>
 					    </div>
 						</div>
 					</div>
@@ -100,25 +97,52 @@
 </template>
 
 <script>
+import { Previewer, TransferDom } from 'vux'
+
 export default {
   data () {
     return {
     	loading: false,
     	imgArr: [],
-			imgMax: 8,
+			imgMax: 9,
 			newFile: true,
-			info_textarea: ''
+			info_textarea: '',
+			imgShowArr: [],
+			options: {
+        getThumbBoundsFn (index) {
+          // find thumbnail element
+          let thumbnail = document.querySelectorAll('.previewer-demo-img')[index]
+          // get window scroll Y
+          let pageYScroll = window.pageYOffset || document.documentElement.scrollTop
+          // optionally get horizontal scroll
+          // get position of element relative to viewport
+          let rect = thumbnail.getBoundingClientRect()
+          // w = width
+          return {x: rect.left, y: rect.top + pageYScroll, w: rect.width}
+          // Good guide on how to get element coordinates:
+          // http://javascript.info/tutorial/coordinates
+        }
+      }
     }
+  },
+  directives: {
+    TransferDom
+  },
+  components: {
+    Previewer
   },
   methods: {
   	goBack () {
   		// this.$router.back()
   		this.$router.push('/home');
   	},
-  	// exif.js 获取照片拍照方向信息
+  	show (index) {
+      this.$refs.previewer.show(index);
+    },
   	getPhotoOrientation(img) {
-  		var orient
-  		var that = this
+  		var orient;
+  		var that = this;
+  		// exif.js 获取照片拍照方向信息
   		that.$EXIF.EXIF.getData(img, () => {
     		orient = that.$EXIF.EXIF.getTag(this, "Orientation");
   		});
@@ -164,7 +188,6 @@ export default {
             var quality = 0.97;
             that.$EXIF.EXIF.getData(files.item(dd), function () {
             	var orient = that.$EXIF.EXIF.getTag(this, "Orientation");
-            	console.log(orient);
             	//生成canvas
             	var canvas = document.createElement('canvas');
             	var ctx = canvas.getContext('2d');
@@ -205,8 +228,10 @@ export default {
 	            	$('.materialboxed').materialbox();
 	            });
 	            if (that.imgArr.length <= that.imgMax - 1) {
-	              that.imgArr.unshift('');
-	              that.imgArr.splice(0, 1, base64);
+	              // that.imgArr.unshift('');
+	              // that.imgArr.splice(0, 1, base64);
+	              that.imgArr.push(base64);
+	              that.imgShowArr.push({src: base64});
 	              // 超出最大限制就隐藏加号
 	              if (that.imgArr.length >= that.imgMax) {
 	                that.newFile = false;
@@ -220,6 +245,10 @@ export default {
             		dd++;
             	} else {
             		clearInterval(timer);
+            		// that.imgShowArr = [];
+            		// for (var i = 0; i < that.imgArr.length; i++) {
+            		// 	that.imgShowArr.push({src: that.imgArr[i]});
+            		// }
             	}
             });
           }
@@ -229,7 +258,11 @@ export default {
 	    }
 	  },
 	  deleteImg(index) {
+	  	this.imgShowArr = [];
 	  	this.imgArr.splice(index, 1);
+	  	for (var i = 0; i < this.imgArr.length; i++) {
+	  		this.imgShowArr.push({src: this.imgArr[i]});
+	  	}
 	  	if (this.imgArr.length < this.imgMax) {
 	  		this.newFile = true;
 	  	}
@@ -265,9 +298,9 @@ export default {
 	  },
 	  onScroll () {
   		if (this.$refs.page.scrollTop > 0) {
-  			$("nav").addClass("shadow")
+  			$("nav.inner").addClass("shadow")
   		} else {
-  			$("nav").removeClass("shadow")
+  			$("nav.inner").removeClass("shadow")
   		}
   	}
   }

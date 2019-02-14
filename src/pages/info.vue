@@ -49,12 +49,20 @@
 
 				<button class="waves-effect waves-dark btn btn-large red saveUpdate-btn" @click="saveChange" type="button">保存</button>
 				<div class="navbar-fixed">
-				  <nav>
+				  <nav class="inner">
 				    <div class="nav-wrapper">
 				      <a href="javascript:;" class="btn-floating btn-large waves-effect waves-dark left-operate" @click="goBack">
 				      	<i class="material-icons">arrow_back</i>
 				      </a>
-				      <a class="brand-logo">{{infoData.date}}</a>
+				      <!-- <a class="brand-logo">{{infoData.date}}</a> -->
+				      <!-- <a class="brand-logo"><i class="material-icons">favorite</i></a> -->
+				      <a class="brand-logo">
+				      	<div class="heart">
+				      		<div class="topLeft"></div>
+				      		<div class="topRight"></div>
+				      		<div class="bottom"></div>
+				      	</div>
+				      </a>
 				      <!-- <a href="#modal1" class="btn-floating btn-large waves-effect waves-dark modal-trigger right-operate">
 				      	<i class="material-icons">delete</i>
 				      </a> -->
@@ -72,9 +80,9 @@
 						<div class="fileInputBox">
 							<div class="container">
 								<div class="row" id="filetainer"> <!--v-for="(image, index) in infoData.img" :key="index"-->
-						      <div class="col s3" v-for="(item, index) in imgList">
+						      <div class="col s4" v-for="(item, index) in imgList">
 						      	<div class="item">
-						      		<img class="previewer-demo-img" @click="show(index)" :src="item.src"> <!--:src="'http://love.s1.natapp.cc/'+image"-->
+						      		<img class="previewer-demo-img" @click="show(index)" :src="item.src">
 						      	</div>
 						      </div>
 						      <div v-transfer-dom>
@@ -247,13 +255,19 @@ export default {
   	},
   	onScroll () {
   		if (this.$refs.page.scrollTop > 0) {
-  			$("nav").addClass("shadow")
+  			$("nav.inner").addClass("shadow")
   		} else {
-  			$("nav").removeClass("shadow")
+  			$("nav.inner").removeClass("shadow")
   		}
   	}
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+	nav a.brand-logo{
+		height: 100%;
+		display: flex;
+		align-items: center;
+  }
+</style>
