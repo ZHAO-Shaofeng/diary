@@ -98,6 +98,9 @@
 						</div>
 					</div>
 				</div>
+				<div class="reload" v-if="booleanReload">
+					<a class="btn waves-effect grey lighten-5 grey-text text-darken-4" href="javascript:;" @click="reload">重新加载</a>
+				</div>
 			</div>
 
 			<div class="fixed-action-btn">
@@ -150,7 +153,8 @@ export default {
 			noData: false,
 			loadmore: false,
 			is_root: false,
-			visitLogList: []
+			visitLogList: [],
+			booleanReload: false
     }
   },
   mounted () {
@@ -167,7 +171,7 @@ export default {
   		}
   	});
 
-  	this.visitLog();
+  	// this.visitLog();
   	this.getData();
   },
   methods: {
@@ -259,6 +263,7 @@ export default {
   	getData () {
   		$.ajax({
 			  url: 'http://love.s1.natapp.cc/api/list.php',
+			  timeout: 10000,
 			  type: 'get',
 			  data: {
 			  	page: this.page,
@@ -267,13 +272,27 @@ export default {
 			  dataType: 'json',
 			  beforeSend: () => {
 			  	this.loading = true
+			  	this.booleanReload = false
 			  },
 			  success: res => {
 					this.loading = false
 			    this.dataList = res.data
 			    localStorage.setItem("isUpdata","false")
+			  },
+			  complete: (XMLHttpRequest,status) => {
+			  	if(status=='timeout'){
+			  		this.loading = false
+			  		this.booleanReload = true
+			  		this.$materialize.toast({
+			    		html: '请求超时',
+			    		displayLength: 1500
+			    	})
+			  	}
 			  }
 			})
+  	},
+  	reload () {
+  		this.getData();
   	},
   	hasClass (ele, cls) {
 			return ele.className.match(new RegExp("(\\s|^)" + cls + "(\\s|$)"));
@@ -304,6 +323,7 @@ export default {
   			$.ajax({
   				url: 'http://love.s1.natapp.cc/api/list.php',
   				type: 'get',
+  				timeout: 10000,
   				data: {
   					page: this.page+1,
   					pagesize: this.pagesize
@@ -320,6 +340,16 @@ export default {
 				    	this.finish = false
 				    	this.loadmore = false
 				    }
+  				},
+  				complete: (XMLHttpRequest,status) => {
+  					if(status=='timeout'){
+  						this.loadmore = false
+  						this.finish = true
+  						this.$materialize.toast({
+  							html: '请求超时',
+  							displayLength: 1500
+  						})
+  					}
   				}
   			})
   		}

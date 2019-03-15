@@ -157,6 +157,7 @@ nav{
         user-select: none;
         box-shadow: none !important;
         background-color: #fff !important;
+        -webkit-tap-highlight-color: transparent;
         i{color: rgba(0,0,0,.87);}
     }
     &.shadow {
@@ -349,4 +350,12 @@ nav{
 @keyframes shadow {
   from {box-shadow: 0 0 0 red;}
   to {box-shadow: 0 0 10px red;}
+}
+
+.reload{
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
