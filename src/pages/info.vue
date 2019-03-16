@@ -71,7 +71,7 @@
 				</div>
 
 				<div class="page-content" v-on:scroll.passive="onScroll" ref="page">
-					<div class="info-form">
+					<div class="info-form" v-if="!booleanReload">
 						<div id="info_textarea" class="info_textarea">{{infoData.info}}</div><!-- @click="editInfo()" -->
 						<textarea id="input_textarea" :oninput="changeInfo()" v-model="input_textarea"></textarea>
 						
@@ -91,6 +91,9 @@
 						    </div>
 							</div>
 						</div>
+					</div>
+					<div class="reload" v-if="booleanReload">
+						<a class="btn waves-effect grey lighten-5 grey-text text-darken-4" href="javascript:;" @click="getInfo">重新加载</a>
 					</div>
 				</div>
 
@@ -124,6 +127,7 @@ export default {
     	},
     	input_textarea: '',	// 编辑框
     	imgList: [],
+			booleanReload: false,
       options: {
         getThumbBoundsFn (index) {
           // find thumbnail element
@@ -151,25 +155,7 @@ export default {
   	$('.modal').modal();
   	$('.materialboxed').materialbox();
 
-  	$.ajax({
-		  url: 'http://love.s1.natapp.cc/api/info.php?id='+this.$route.query.id,
-		  type: 'get',
-		  dataType: 'json',
-		  success: res => {
-		    this.loading = false;
-		    this.infoData = res.data;
-		    this.input_textarea = res.data.info;
-		    for(let i=0; i<res.data.img.length; i++){
-          this.imgList.push({src: res.data.img[i]})
-        }
-		    if (res.data.img.length < 1) {
-		    	$('.fileInputBox').hide();
-		    }
-			  $(document).ready(function(){
-			    $('.materialboxed').materialbox();
-			  });
-		  }
-		})
+  	this.getInfo();
   },
   methods: {
     show (index) {
@@ -178,6 +164,51 @@ export default {
   	goBack () {
   		// this.$router.back();
   		this.$router.push('/home');
+  	},
+  	getInfo () {
+  		$.ajax({
+			  url: 'http://love.s1.natapp.cc/api/info.php?id='+this.$route.query.id,
+			  timeout: 5000,
+			  type: 'get',
+			  dataType: 'json',
+			  beforeSend: () => {
+			  	this.loading = true
+			  	this.booleanReload = false
+			  },
+			  success: res => {
+			    this.loading = false;
+			    this.infoData = res.data;
+			    this.input_textarea = res.data.info;
+			    for(let i=0; i<res.data.img.length; i++){
+	          this.imgList.push({src: res.data.img[i]})
+	        }
+			    if (res.data.img.length < 1) {
+			    	$('.fileInputBox').hide();
+			    }
+				  $(document).ready(function(){
+				    $('.materialboxed').materialbox();
+				  });
+			  },
+			  error: (XMLHttpRequest,status) => {
+			  	if(status=='timeout'){
+			  		this.input_textarea = this.infoData.info;
+			  		this.loading = false
+			  		this.booleanReload = true
+			  		this.$materialize.toast({
+			    		html: '请求超时',
+			    		displayLength: 1500
+			    	})
+			  	}else{
+			  		this.input_textarea = this.infoData.info;
+			  		this.loading = false
+			  		this.booleanReload = true
+			  		this.$materialize.toast({
+			    		html: '请求失败，未知错误',
+			    		displayLength: 3000
+			    	})
+			  	}
+			  }
+			})
   	},
   	editInfo () {
   		$("#info_textarea").hide();

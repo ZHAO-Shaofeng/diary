@@ -99,7 +99,7 @@
 					</div>
 				</div>
 				<div class="reload" v-if="booleanReload">
-					<a class="btn waves-effect grey lighten-5 grey-text text-darken-4" href="javascript:;" @click="reload">重新加载</a>
+					<a class="btn waves-effect grey lighten-5 grey-text text-darken-4" href="javascript:;" @click="getData">重新加载</a>
 				</div>
 			</div>
 
@@ -117,7 +117,7 @@
 					</p>
 				</div>
 				<div class="modal-footer">
-					<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">关闭</a>
+					<a href="javascript:;" class="modal-action modal-close waves-effect btn-flat">关闭</a>
 				</div>
 			</div>
 	  </div>
@@ -191,6 +191,7 @@ export default {
 	  	if (!uid) {
 	  		$.ajax({
 	  			url: 'http://love.s1.natapp.cc/api/visit.php',
+	  			timeout: 5000,
 	  			type: 'post',
 	  			data: {
 	  				uid: this.generateMixed(10),
@@ -211,6 +212,7 @@ export default {
   			if (parseInt(count) >= 4) {
   				$.ajax({
   					url: 'http://love.s1.natapp.cc/api/is_root.php',
+  					timeout: 5000,
   					type: 'post',
   					data: {
   						uid: uid
@@ -244,6 +246,7 @@ export default {
   			if (parseInt(count) >= 4) {
   				$.ajax({
   					url: 'http://love.s1.natapp.cc/api/show_visit.php',
+  					timeout: 5000,
   					type: 'get',
   					dataType: 'json',
   					success: function(res){
@@ -263,7 +266,7 @@ export default {
   	getData () {
   		$.ajax({
 			  url: 'http://love.s1.natapp.cc/api/list.php',
-			  timeout: 10000,
+			  timeout: 5000,
 			  type: 'get',
 			  data: {
 			  	page: this.page,
@@ -279,20 +282,26 @@ export default {
 			    this.dataList = res.data
 			    localStorage.setItem("isUpdata","false")
 			  },
-			  complete: (XMLHttpRequest,status) => {
+			  error: (XMLHttpRequest,status) => {
 			  	if(status=='timeout'){
+			  		this.dataList = []
 			  		this.loading = false
 			  		this.booleanReload = true
 			  		this.$materialize.toast({
 			    		html: '请求超时',
 			    		displayLength: 1500
 			    	})
+			  	}else{
+			  		this.dataList = []
+			  		this.loading = false
+			  		this.booleanReload = true
+			  		this.$materialize.toast({
+			    		html: '请求失败，未知错误',
+			    		displayLength: 3000
+			    	})
 			  	}
 			  }
 			})
-  	},
-  	reload () {
-  		this.getData();
   	},
   	hasClass (ele, cls) {
 			return ele.className.match(new RegExp("(\\s|^)" + cls + "(\\s|$)"));
@@ -323,7 +332,7 @@ export default {
   			$.ajax({
   				url: 'http://love.s1.natapp.cc/api/list.php',
   				type: 'get',
-  				timeout: 10000,
+  				timeout: 5000,
   				data: {
   					page: this.page+1,
   					pagesize: this.pagesize

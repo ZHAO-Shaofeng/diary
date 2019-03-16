@@ -55,7 +55,7 @@
 			      	<i class="material-icons">arrow_back</i>
 			      </a>
 			      <a class="brand-logo">树洞</a>
-			      <button type="button" class="btn-floating btn-large waves-effect waves-dark right-operate" @click="ok">
+			      <button type="button" class="btn-floating btn-large waves-effect waves-dark right-operate" v-if="okBtn" @click="ok">
 			      	<i class="material-icons">done</i>
 			      </button>
 			    </div>
@@ -92,6 +92,26 @@
 					</div>
 				</div>
 			</transition>
+
+			<div id="timeoutModal" class="modal">
+				<div class="modal-content">
+					<h4>发布超时</h4>
+					<p>程序设置了15秒超时时间，建议将页面截图或者文字拷贝，然后退出此页重新操作</p>
+				</div>
+				<div class="modal-footer">
+					<a href="javascript:;" class="modal-action modal-close waves-effect btn-flat">了解</a>
+				</div>
+			</div>
+
+			<div id="errorModal" class="modal">
+				<div class="modal-content">
+					<h4>发布失败</h4>
+					<p>程序出现未知错误，建议将页面截图或者文字拷贝，然后退出此页重新操作</p>
+				</div>
+				<div class="modal-footer">
+					<a href="javascript:;" class="modal-action modal-close waves-effect btn-flat">了解</a>
+				</div>
+			</div>
 	  </div>
 	</transition>
 </template>
@@ -122,7 +142,8 @@ export default {
           // Good guide on how to get element coordinates:
           // http://javascript.info/tutorial/coordinates
         }
-      }
+      },
+      okBtn: true
     }
   },
   directives: {
@@ -130,6 +151,9 @@ export default {
   },
   components: {
     Previewer
+  },
+  mounted () {
+  	$('.modal').modal();
   },
   methods: {
   	goBack () {
@@ -280,6 +304,7 @@ export default {
 			}else{
 				$.ajax({
 					url: 'http://love.s1.natapp.cc/api/write.php',
+					timeout: 15000,
 				  type: 'post',
 				  data: json,
 				  dataType: 'json',
@@ -292,6 +317,19 @@ export default {
 				    	localStorage.setItem("isUpdata","true")
 				    	setTimeout(this.goBack(),1000)
 				    }
+				  },
+				  error: (XMLHttpRequest,status) => {
+				  	if(status=='timeout'){
+				  		this.loading = false
+					  	this.okBtn = false
+					  	localStorage.setItem("isUpdata","true")
+					  	$('#timeoutModal').modal('open')
+				  	}else{
+				  		this.loading = false
+					  	this.okBtn = false
+					  	localStorage.setItem("isUpdata","true")
+					  	$('#errorModal').modal('open')
+				  	}
 				  }
 				})
 			}
