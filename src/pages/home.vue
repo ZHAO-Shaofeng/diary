@@ -171,7 +171,7 @@ export default {
   		}
   	});
 
-  	// this.visitLog();
+  	this.visitLog();
   	this.getData();
   },
   methods: {
